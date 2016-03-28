@@ -1,0 +1,213 @@
+\documentclass[10pt]{article}
+\usepackage[applemac]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[cross]{crop}
+
+\usepackage[paperheight=105mm,paperwidth=148mm, left=5mm,right=5mm,top=5mm,bottom=5mm]{geometry}
+\usepackage{parskip}
+\usepackage{multirow}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\renewcommand{\arraystretch}{1.2}
+\usepackage{bbding}
+
+\usepackage{xskak, chessboard}
+\usepackage{ifthen}
+\author{Tim Benedikt Herbstrith}
+
+\pagestyle{empty}
+
+\directlua{dofile("minuskSteps.lua")}
+\newcommand*{\privateGetMinuskSteps}[5]{%
+	\directlua{%
+	getMinuskSteps(\the\numexpr #1\relax, "#2", "#3",\the\numexpr #4\relax, "#5")%
+	}%
+}
+\newcommand*{\getMinuskSteps}[4][-]{%
+\xskakset{lastmoveid=#2}%
+\ifthenelse{\equal{\xskakget{movenr}}{0}}{%
+	#1}{%
+	\privateGetMinuskSteps{\xskakget{movenr}}{\xskakgetgame{nextplayer}}{#3}{#4}{#1}%
+	}%
+}
+\newcommand{\timedifference}[3]{%
+\directlua{%
+ret=lastDayDifferenceFromStrings("#1","#2","#3","-")%
+tex.sprint(ret)%
+}%
+}
+
+\newcommand{\totalRespite}[3]{%
+\directlua{%
+ret=totalRespiteFromString("#1","#2","#3","-")%
+tex.sprint(ret)%
+}%
+}
+
+\newcommand{\lastDate}[1]{%
+\directlua{%
+	ret=lastDate("#1","-")%
+	tex.sprint(ret)%
+}%
+}
+
+% LaTeX code for the LuLaTeX macros above
+%\newcommand{\getMinuskSteps}[3]{% Only works for k<=5
+%\xskakset{lastmoveid=#1}%
+%\ifthenelse{\equal{\xskakget{movenr}}{0}}{%
+%	-}{%
+%	\ifthenelse{\equal{#3}{0}}{%
+%		\xskakget{#2}%
+%		}{
+%		\ifthenelse{\equal{\xskakget{movenr}}{1}}{%
+%			\ifthenelse{\equal{\xskakgetgame{nextplayer}}{w}}{%
+%				\ifthenelse{\equal{#3}{1}}{%
+%					\xskakset{stepmoveid=-1}%
+%					\xskakget{#2}%
+%					}{%
+%					-%
+%					}%
+%				}{%
+%				-}%
+%			}{%
+%			\ifthenelse{\equal{\xskakget{movenr}}{2}}{%
+%				\ifthenelse{\equal{#3}{3}\OR\equal{#3}{4}\OR\equal{#3}{5}}{%
+%					\ifthenelse{\equal{#3}{3}\AND\equal{\xskakgetgame{nextplayer}}{w}}{
+%						\xskakset{stepmoveid=-3}%
+%						\xskakget{#2}%
+%						}{%
+%						-%
+%						}%
+%					}{%
+%					\xskakset{stepmoveid=-#3}%
+%					\xskakget{#2}%
+%					}%		
+%				}{%
+%				\ifthenelse{\equal{#3}{5}}{
+%					\ifthenelse{\equal{\xskakgetgame{nextplayer}}{w}}{
+%						\xskakset{stepmoveid=-5}%
+%						\xskakget{#2}%
+%						}{%
+%						-%
+%						}%
+%					}{%
+%					\xskakset{stepmoveid=-#3}%
+%					\xskakget{#2}%
+%					}%
+%				}%
+%			}%
+%		}%
+%	}%
+%}%
+
+\newcommand{\dateReceived}{nil        29.08.2014 13.09.2014 20.09.2014 20.09.2014 21.09.2014 21.09.2014 22.09.2014 05.10.2014}
+\newcommand{\dateAnswered}{08.05.2014 04.09.2014 19.09.2014 20.09.2014 20.09.2014 21.09.2014 21.09.2014 23.09.2014 06.10.2014}
+
+\begin{document}
+
+
+\setchessboard{
+     smallboard,
+	 margin=false,
+     showmover=false,
+     moverstyle=triangle,
+     moversize=8pt}
+     
+
+\newchessgame[	id=BS1, 
+				white=Herbstrith,
+				black=Braito,
+				event=M\"unchen/Wien,
+				date=MMXIV]
+\hidemoves{1. e4 e5 2. Nf3 Nf6 3. Nxe5 Qe7 4. Nf3 Nxe4 5. Be2 f5 6. d3 Nf6 7. O-O Nc6 8. Nc3 h5 9. Re1}
+
+\newchessgame[id=BS2, black=Herbstrith, white=Braito]
+
+
+\newchessgame[id=empty]
+
+
+\begin{small}
+\begin{center}
+\begin{tabular}{ l   R{4.5ex}  R{8ex}   R{8ex}  r  }
+\xskakset{lastmoveid=BS1}%
+\multirow{6}{*}{%
+\ifthenelse{\equal{\xskakget{movenr}}{0}}{%
+\xskakset{lastmoveid=empty}%
+\chessboard[%
+	labelleft,%
+	pgfstyle=border%
+	] %
+}{%
+\chessboard[%
+	setfen=\xskakget{nextfen},%
+	labelleft,%
+	pgfstyle=border,%
+	markfields={\xskakget{moveto}}%
+	]%
+}%
+}%
+&%
+\multicolumn{3}{c}{\textsc{\xskakgetgame{white}---\xskakgetgame{black}}}  &%
+\xskakset{lastmoveid=BS2}%
+\multirow{6}{*}{%
+\ifthenelse{\equal{\xskakget{movenr}}{0}}{%
+\xskakset{lastmoveid=empty}%
+\chessboard[%
+	labelleft=false,%
+	labelright,%
+	pgfstyle=border%
+	] %
+}{%
+\chessboard[%
+	setfen=\xskakget{nextfen},%
+	labelleft=false,%
+	labelright,%
+	pgfstyle=border,%
+	markfields={\xskakget{moveto}}%
+	] %
+}
+} \\% Erste Zeile
+\xskakset{id=BS1}%
+	& \multicolumn{3}{c}{\xskakgetgame{event}}  &\\
+	& \multicolumn{3}{c}{\xskakgetgame{date}}  &\\
+	& \multicolumn{2}{l}{Partie 1} & \HandLeft  &\\
+	\cline{2-4}
+	&	\getMinuskSteps{BS1}{movenr}{4}.	&	\getMinuskSteps{BS1}{san}{4}	 & 	\getMinuskSteps{BS1}{san}{3}	&					\\
+	&	\getMinuskSteps{BS1}{movenr}{2}.	&	\getMinuskSteps{BS1}{san}{2}	 & 	\getMinuskSteps{BS1}{san}{1}	&					\\
+	& \multicolumn{2}{l}{Partie 2} & \HandRight  &\\
+	\cline{2-4}
+	&	\getMinuskSteps{BS2}{movenr}{5}.	&	\getMinuskSteps{BS2}{san}{5}	 & 	\getMinuskSteps{BS2}{san}{4}	&					\\
+	&	\getMinuskSteps{BS2}{movenr}{3}.	&	\getMinuskSteps{BS2}{san}{3}	 & 	\getMinuskSteps{BS2}{san}{2}	&					\\
+
+\end{tabular}
+\end{center}
+\end{small}
+\vspace{\fill}
+\begin{tabular}{C{10ex} | C{10ex}   C{10ex}}
+Nr.	& Ihr Zug	& Mein Zug\\
+\hline
+\getMinuskSteps{BS1}{movenr}{1}/\getMinuskSteps{BS1}{movenr}{0}. & \getMinuskSteps{BS1}{san}{1}	 & 	\getMinuskSteps{BS1}{san}{0}
+\end{tabular}
+\hspace{\fill}
+\begin{tabular}{C{10ex} | C{10ex}   C{10ex}}
+Nr.	& Ihr Zug	& Mein Zug\\
+\hline
+\getMinuskSteps{BS2}{movenr}{1}. & \getMinuskSteps{BS2}{san}{1}	 & 	\getMinuskSteps{BS2}{san}{0}
+\end{tabular}
+\vspace{\fill}
+\begin{center}
+\begin{tabular}{ L{26ex} R{3.5ex} L{7ex}  C{0.3ex}  L{24ex} R{3.5ex} L{7ex} }
+Empfangen am				&	\multicolumn{2}{c}{\lastDate{\dateReceived}}		&	&	Beantwortet am			&	\multicolumn{2}{c}{\lastDate{\dateAnswered}}\\
+Meine Bedenkzeit			&	\timedifference{\dateReceived}{\dateAnswered}{1}	&	Tag(e)	&	&	Ihre Bedenkzeit			&	\timedifference{\dateAnswered}{\dateReceived}{2}	&	Tag(e)\\
+Meine Gesamtbedenkzeit	&	\totalRespite{\dateReceived}{\dateAnswered}{1}	&	Tage		&	&	Ihre Gesamtbedenkzeit 	& \totalRespite{\dateAnswered}{\dateReceived}{2}	&	Tage\\
+\end{tabular}
+\end{center}
+\vspace{\fill}
+\begin{flushright}
+Mit besten Gr\"u\ss{}en
+\end{flushright}
+\vspace{\fill}
+\end{document}
